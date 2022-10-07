@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from 'src/app/services/user.service';
 
 declare function customInitFunctions(): any;
 
@@ -10,10 +11,16 @@ declare function customInitFunctions(): any;
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private userService: UserService
+  ) { }
 
   ngOnInit(): void {
     customInitFunctions();
+  }
+
+  logout(){
+    this.userService.logout()
   }
 
 }
