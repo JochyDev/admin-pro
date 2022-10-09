@@ -3,8 +3,10 @@ import { Injectable } from '@angular/core';
 import { catchError, map, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LoginForm } from '../interfaces/login-form.interface';
+import { profileForm } from '../interfaces/profileForm.interface';
 
 import { RegisterForm } from '../interfaces/register-form.interface';
+import { User } from '../models/user.model';
 
 const base_url = environment.base_url;
 
@@ -13,21 +15,38 @@ const base_url = environment.base_url;
 })
 export class UserService {
 
+  public user!: User;
+
   constructor(
     private http: HttpClient
   ) { }
 
+  get token(){
+    return localStorage.getItem('token') || ''
+  }
+
+  get uid(){
+    return this.user.uid || ''
+  }
+
   validarToken (){
-    const token = localStorage.getItem('token') || '';
 
     return this.http.get(`${base_url}/login/renew`, {
       headers: {
-        'x-token': token 
+        'x-token': this.token 
       }
     }).pipe(
-      tap( (resp:any) => localStorage.setItem('token', resp.token )),
-      map( (resp) => true),
-      catchError( err => of(false))
+      map( (resp:any) => {
+
+        const {name, email, google, role, img = '', uid} = resp.user
+
+        this.user = new User( name, email, role, uid, '', img, google );
+        localStorage.setItem('token', resp.token )
+        return true;
+      }),
+      catchError( (err: any) => {
+        return of(false)
+      })
       )
   }
 
@@ -36,6 +55,24 @@ export class UserService {
       .pipe(
         tap( (resp:any) => localStorage.setItem('token', resp.token ))
       )
+  }
+
+  updateUser(formData: profileForm){
+
+    formData = {
+      ...formData,
+      role: this.user.role
+    }
+
+
+
+    return this.http.put(
+      `${base_url}/users/${this.uid}`, formData,
+      {
+        headers: {
+          'x-token': this.token
+        }
+      })
   }
 
   login(formData: LoginForm){

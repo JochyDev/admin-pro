@@ -9,8 +9,6 @@ import { environment } from 'src/environments/environment';
 
 declare const google: any;
 const googleId: string = environment.GOOGLE_ID;
-const base_url: string = environment.base_url;
-
 
 @Component({
   selector: 'app-login',
@@ -23,8 +21,8 @@ export class LoginComponent implements OnInit {
   private email!: string;
 
   public loginForm: FormGroup = this.fb.group({
-    email: ['test@test.test', Validators.required],
-    password: ['123456', Validators.required],
+    email: ['', Validators.required],
+    password: ['', Validators.required],
     remember: [false]
   })
 
