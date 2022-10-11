@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
 import { FileUploadService } from 'src/app/services/file-upload.service';
 import { UserService } from 'src/app/services/user.service';
@@ -72,8 +72,7 @@ export class ProfileComponent implements OnInit {
       this.user.img = img;
       Swal.fire('Guardado', 'Imagen de Usuario Anctulizada', 'success')
     })
-    .catch( err => {
-      console.log(err)
+    .catch( () => {
       Swal.fire('Error', 'No se pudo subir la imagen', 'error')
     })
 
