@@ -80,7 +80,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     this.loading = true;
     this.searchsService.search( 'user', this.param.value)
-    .subscribe((result) => {
+    .subscribe((result:  any[]) => {
       this.users = result;
       this.loading = false;
     })
@@ -98,8 +98,6 @@ export class UsersComponent implements OnInit, OnDestroy {
       text: `Esta a punto de borrar a ${user.name}`,
       icon: 'question',
       showCancelButton: true,
-      // confirmButtonColor: '#3085d6',
-      // cancelButtonColor: '#d33',
       confirmButtonText: 'Si, borrarlo'
     }).then((result) => {
       if (result.isConfirmed) {
@@ -114,7 +112,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   openModal(user: User){
-    this.modalImageService.openModal('users', user.uid, user.imageUrl);
+    this.modalImageService.openModal('users', user.uid, user.img);
   }
 
   ngOnDestroy(): void {

@@ -25,28 +25,32 @@ export class UserService {
     return localStorage.getItem('token') || ''
   }
 
+  get headers(){
+    return {
+      headers: {
+        'x-token': this.token
+      }
+    }
+  }
+
   get uid(){
     return this.user.uid || ''
   }
 
   validarToken (){
 
-    return this.http.get(`${base_url}/login/renew`, {
-      headers: {
-        'x-token': this.token 
-      }
-    }).pipe(
-      map( (resp:any) => {
+    return this.http.get(`${base_url}/login/renew`, this.headers)
+      .pipe(
+        map( (resp:any) => {
+          const {name, email, google, role, img = '', uid} = resp.user
 
-        const {name, email, google, role, img = '', uid} = resp.user
-
-        this.user = new User( name, email, role, uid, '', img, google );
-        localStorage.setItem('token', resp.token )
-        return true;
-      }),
-      catchError( (err: any) => {
-        return of(false)
-      })
+          this.user = new User( name, email, role, uid, '', img, google );
+          localStorage.setItem('token', resp.token )
+          return true;
+        }),
+        catchError( (err: any) => {
+          return of(false)
+        })
       )
   }
 
@@ -64,26 +68,16 @@ export class UserService {
       role: this.user.role
     }
 
-
-
     return this.http.put(
-      `${base_url}/users/${this.uid}`, formData,
-      {
-        headers: {
-          'x-token': this.token
-        }
-      })
+      `${base_url}/users/${this.uid}`, formData, this.headers
+      )
   }
 
   updateUserRole(user: User){
 
     return this.http.put(
-      `${base_url}/users/${this.user.uid}`, user,
-      {
-        headers: {
-          'x-token': this.token
-        }
-      })
+      `${base_url}/users/${user.uid}`, user, this.headers
+    )
   }
 
   login(formData: LoginForm){
@@ -95,27 +89,26 @@ export class UserService {
     }
 
     return this.http.post(`${base_url}/login`, formData)
-                    .pipe( 
-                      map((res: any) => {
-                        localStorage.setItem('token', res.token);
+      .pipe( 
+        map((res: any) => {
+          localStorage.setItem('token', res.token);
 
-                        return true;
-                      })
-                     )
+          return true;
+        })
+      )
   }
 
 
   googleSingIn(data: any){
 
-
     return this.http.post(`${base_url}/login/google`, data )
-        .pipe( 
-          map((res: any) => {
-            localStorage.setItem('token', res.token);
-          
-            return true;
-          })
-         )
+      .pipe( 
+        map((res: any) => {
+          localStorage.setItem('token', res.token);
+        
+          return true;
+        })
+       )
   }
 
   logout(){
@@ -123,17 +116,10 @@ export class UserService {
   }
 
   loadUsers(desde: number = 0){
-
-    let httpParams = new HttpParams();
-    httpParams = httpParams.set('desde', desde);
     
-    return this.http.get<{total: number, users: User[]}>(`${base_url}/users`,
-    {
-      headers: {
-        'x-token': this.token
-      },
-      params: httpParams  
-    })
+    return this.http.get<{total: number, users: User[]}>(
+      `${base_url}/users?desde=${desde}`, this.headers
+    )
     .pipe(
       map((result) => {
         const users = result.users.map(
@@ -148,11 +134,7 @@ export class UserService {
   }
 
   deleteUser(id: string){
-    return this.http.delete(`${base_url}/users/${id}`, {
-      headers: {
-        'x-token': this.token
-      }
-    });
+    return this.http.delete(`${base_url}/users/${id}`, this.headers );
   }
 
 }

@@ -15,6 +15,10 @@ import { RxjsComponent } from './rxjs/rxjs.component';
 import { ProfileComponent } from './profile/profile.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsersComponent } from './mantenimientos/users/users.component';
+import { HospitalsComponent } from './mantenimientos/hospitals/hospitals.component';
+import { DoctorsComponent } from './mantenimientos/doctors/doctors.component';
+import { PipesModule } from '../pipes/pipes.module';
+import { DoctorComponent } from './mantenimientos/doctors/doctor.component';
 
 
 
@@ -28,7 +32,10 @@ import { UsersComponent } from './mantenimientos/users/users.component';
     PromesasComponent,
     RxjsComponent,
     ProfileComponent,
-    UsersComponent
+    UsersComponent,
+    HospitalsComponent,
+    DoctorsComponent,
+    DoctorComponent
   ],
   imports: [
     CommonModule,
@@ -36,7 +43,8 @@ import { UsersComponent } from './mantenimientos/users/users.component';
     SharedModule,
     ComponentsModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule, 
+    PipesModule
   ],
   exports: [
     DashboardComponent,
