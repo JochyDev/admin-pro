@@ -21,14 +21,18 @@ export class SearchsService {
     return localStorage.getItem('token') || ''
   }
 
-  search( tipo: 'user' | 'doctor' | 'hospital', termino: string) {
-
-    // TODO: cambiar tipado de la respuesta
-    return this.http.get<{ok: boolean, results: any[]}>(`${base_url}/todo/collection/${tipo}/${termino}`, {
+  get headers(){
+    return {
       headers: {
         'x-token': this.token
       }
-    }).pipe(
+    }
+  }
+
+  search( tipo: 'user' | 'doctor' | 'hospital', termino: string) {
+
+    // TODO: cambiar tipado de la respuesta
+    return this.http.get<{ok: boolean, results: any[]}>(`${base_url}/todo/collection/${tipo}/${termino}`, this.headers ).pipe(
       map( (result) => {
         switch (tipo) {
           case 'user':
@@ -45,6 +49,12 @@ export class SearchsService {
         }
       })
     )
+  }
+
+  searchAll(term: string){
+    return this.http.get
+    <{ok: boolean, hospitals: Hospital[], usuarios: User[], doctors: Doctor[]}>
+      (`${base_url}/todo/${term}`, this.headers);
   }
 
   transformarUsers( results: any[]): User[]{

@@ -25,6 +25,10 @@ export class UserService {
     return localStorage.getItem('token') || ''
   }
 
+  get role(): 'ADMIN_ROLE' | 'USER_ROLE' {
+    return this.user.role
+  }
+
   get headers(){
     return {
       headers: {
@@ -37,6 +41,11 @@ export class UserService {
     return this.user.uid || ''
   }
 
+  saveLocalStorage(token: string, menu: string){
+    localStorage.setItem('token', token );
+    localStorage.setItem('menu', JSON.stringify(menu));
+  }
+
   validarToken (){
 
     return this.http.get(`${base_url}/login/renew`, this.headers)
@@ -45,7 +54,9 @@ export class UserService {
           const {name, email, google, role, img = '', uid} = resp.user
 
           this.user = new User( name, email, role, uid, '', img, google );
-          localStorage.setItem('token', resp.token )
+
+          this.saveLocalStorage(resp.token, resp.menu);
+
           return true;
         }),
         catchError( (err: any) => {
@@ -57,7 +68,9 @@ export class UserService {
   createUser(formData: RegisterForm){
     return this.http.post(`${base_url}/users`, formData)
       .pipe(
-        tap( (resp:any) => localStorage.setItem('token', resp.token ))
+        tap( (resp:any) =>{ 
+          this.saveLocalStorage(resp.token, resp.menu);
+        })
       )
   }
 
@@ -91,7 +104,7 @@ export class UserService {
     return this.http.post(`${base_url}/login`, formData)
       .pipe( 
         map((res: any) => {
-          localStorage.setItem('token', res.token);
+          this.saveLocalStorage(res.token, res.menu);
 
           return true;
         })
@@ -104,7 +117,7 @@ export class UserService {
     return this.http.post(`${base_url}/login/google`, data )
       .pipe( 
         map((res: any) => {
-          localStorage.setItem('token', res.token);
+          this.saveLocalStorage(res.token, res.menu);
         
           return true;
         })

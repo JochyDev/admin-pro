@@ -7,7 +7,7 @@ export class User {
    constructor( 
         public name:   string,
         public email:  string,
-        public role:   string,
+        public role: 'ADMIN_ROLE' | 'USER_ROLE',
         public uid:    string,
         public password?: string,
         public img?:   string,
